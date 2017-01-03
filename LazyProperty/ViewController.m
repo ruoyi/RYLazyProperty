@@ -10,6 +10,28 @@
 #import "NSObject+RYLazyProperty.h"
 
 
+typedef id (^RYMapBlock)(id value);
+
+static inline NSArray* ry_map(NSArray * _Nullable mapArr,RYMapBlock block){
+    NSArray *mapArrCopy = [mapArr copy];
+    if (!block) {
+        return nil;
+    }
+    NSMutableArray *resultArr = [[NSMutableArray alloc]init];
+    [mapArrCopy enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        id mapValue = block(obj);
+        if (mapValue) {
+            [resultArr addObject:mapValue];
+        }
+    }];
+    return resultArr;
+}
+
+
+
+
+
+
 @interface Animal : NSObject
 
 @property (nonatomic, copy) NSString *name;
