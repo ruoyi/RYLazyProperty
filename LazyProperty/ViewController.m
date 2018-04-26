@@ -10,28 +10,6 @@
 #import "NSObject+RYLazyProperty.h"
 
 
-typedef id (^RYMapBlock)(id value);
-
-static inline NSArray* ry_map(NSArray * _Nullable mapArr,RYMapBlock block){
-    NSArray *mapArrCopy = [mapArr copy];
-    if (!block) {
-        return nil;
-    }
-    NSMutableArray *resultArr = [[NSMutableArray alloc]init];
-    [mapArrCopy enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        id mapValue = block(obj);
-        if (mapValue) {
-            [resultArr addObject:mapValue];
-        }
-    }];
-    return resultArr;
-}
-
-
-
-
-
-
 @interface Animal : NSObject
 
 @property (nonatomic, copy) NSString *name;
@@ -48,7 +26,7 @@ static inline NSArray* ry_map(NSArray * _Nullable mapArr,RYMapBlock block){
 {
     self = [super init];
     if (self) {
-        self.name = @"board";
+//        self.name = @"board";
         self.foots = [@[@"apple",@"water"] mutableCopy];
         self.attribute = @{
                            @"height":@12,
@@ -63,6 +41,7 @@ static inline NSArray* ry_map(NSArray * _Nullable mapArr,RYMapBlock block){
 @interface ViewController ()
 
 @property (nonatomic, strong) Animal *animal;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 
 @end
 
@@ -70,19 +49,21 @@ static inline NSArray* ry_map(NSArray * _Nullable mapArr,RYMapBlock block){
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+  
     [Animal ry_setLazyPropertyArr:@[@"name",@"foots",@"attribute",]];
     [ViewController ry_setLazyPropertyArr:@[@"animal"]];
-    [self.animal.foots addObject:@"Noodles"];
     NSLog(@"%@", self.animal.foots);
     NSLog(@"%@", self.animal.name);
     [Animal ry_setLazyPropertyArr:@[@"name",@"attribute",]];
-
     self.animal.foots = nil;
     [self.animal.foots addObject:@"Noodles"];
-
+    if (self.animal.name == nil) {
+        self.animal.name = @"";
+    }
+  
+    self.nameLabel.text = [NSString stringWithFormat:@"动物名称:%@", self.animal.name];
     NSLog(@"%@", self.animal.foots);
 
-    // Do any additional setup after loading the view, typically from a nib.
 }
 
 

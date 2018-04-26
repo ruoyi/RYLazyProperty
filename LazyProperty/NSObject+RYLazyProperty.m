@@ -44,6 +44,7 @@
     
     NSString *className = [propertyAtt substringWithRange:NSMakeRange(rangeBegin.location + rangeBegin.location + 1, rangeEnd.location - 3)];
     value = [[NSClassFromString(className) alloc] init];
+    // if override set method
     NSString *setMethod = [@"set" stringByAppendingString:[NSStringFromSelector(_cmd) capitalizedString]];
     if ([propertyAtt containsString:[@"S_" stringByAppendingString:setMethod]]) {
         SEL setSEL = NSSelectorFromString([setMethod stringByAppendingString:@":"]);
@@ -59,23 +60,6 @@
     }
     return value;
 }
-
-
-+ (void)ry_CorrespondProperty:(NSDictionary<NSString *,NSString *>  *)correspondDic {
-    for (NSString *key in correspondDic) {
-        NSString *value = correspondDic[key];
-        [self _ry_checkPropertyViable:key];
-        [self _ry_checkPropertyViable:value];
-        IMP getOriginalIMP = [self methodForSelector:@selector(key)];
-        Method getOriginalMethod = class_getInstanceMethod([self class], @selector(key));
-        class_replaceMethod([self class], NSSelectorFromString(value), getOriginalIMP, method_getTypeEncoding(getOriginalMethod));
-        NSString *setMethod = [@"set" stringByAppendingString:[key capitalizedString]];
-        
-        IMP setOriginalIMP = [self methodForSelector:NSSelectorFromString(setMethod)];
-        class_replaceMethod([self class], NSSelectorFromString([@"set" stringByAppendingString:[value capitalizedString]]), setOriginalIMP, NULL);
-    }
-}
-
 
 
 
