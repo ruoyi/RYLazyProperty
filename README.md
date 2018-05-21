@@ -3,10 +3,10 @@
 1. 更方便的懒加载
 ``` objc
 - (Animal *)animal {
-if (_animal) {
-_animal = [Animal new];
-}
-return _layerView;
+    if (_animal) {
+        _animal = [Animal new];
+    }
+    return _layerView;
 }
 ```
 2. 部分数据的容错
